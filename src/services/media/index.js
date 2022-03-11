@@ -4,6 +4,8 @@ import createHttpError from "http-errors";
 import { getMedia, writeMedia } from "../../lib/fs-tools.js";
 import { validator, commentValidator } from "./validation.js";
 import { validationResult } from "express-validator";
+import { savedPosters } from "../../lib/fs-tools.js";
+import multer from "multer";
 
 const mediaRouter = express.Router();
 
@@ -130,5 +132,18 @@ mediaRouter.delete("/:imdbID/comments/:commentID", async (req, res, next) => {
     next(error);
   }
 });
+
+mediaRouter.post(
+  "/:imdbID/poster",
+  multer().single("poster"),
+  async (req, res, next) => {
+    try {
+      await savedPosters(req.file.originalname, req.file.buffer);
+      res.send({ message: "uploaded" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default mediaRouter;

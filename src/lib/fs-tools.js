@@ -9,6 +9,10 @@ const mediaJSONPath = join(
   "media.json"
 );
 
+const publicPath = join(process.cwd(), "./public/posters");
 export const getMedia = () => readJSON(mediaJSONPath);
 
 export const writeMedia = (content) => writeJSON(mediaJSONPath, content);
+
+export const savedPosters = (filename, contentAsABuffer) =>
+  writeFile(join(publicPath, filename), contentAsABuffer);
