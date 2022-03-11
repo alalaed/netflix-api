@@ -117,12 +117,15 @@ mediaRouter.delete("/:imdbID/comments/:commentID", async (req, res, next) => {
     const index = allMedia.findIndex(
       (media) => media.imdbID === req.params.imdbID
     );
-    const comments = allMedia[index].comments;
-    const remainingComments = comments.filter(
-      (comment) => comment.commentID !== req.params.commentID
-    );
-    comments = remainingComments;
-    writeMedia(allMedia);
+    if (index === -1) {
+      res.status(404).send({ message: "media not found" });
+    } else {
+      allMedia[index].comments = allMedia[index].comments.filter(
+        (comment) => comment.commentID !== req.params.commentID
+      );
+      writeMedia(allMedia);
+      res.status(204).send();
+    }
   } catch (error) {
     next(error);
   }

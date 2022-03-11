@@ -16,3 +16,4 @@ console.table(listEndpoints(server));
 server.listen(port, () => {
   console.log("server is running on port" + port);
 });
+server.on("error", (error) => console.log(error));
