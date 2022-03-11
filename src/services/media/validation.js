@@ -6,3 +6,8 @@ export const validator = [
   body("Type").exists().withMessage("Type is a mandatory field."),
   body("Poster").exists().withMessage("Poster is a mandatory field."),
 ];
+
+export const commentValidator = [
+  body("user").exists().withMessage("user is a mandatory field."),
+  body("comment").exists().withMessage("comment is a mandatory field."),
+];
