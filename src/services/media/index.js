@@ -45,6 +45,22 @@ mediaRouter.post("/", validator, async (req, res, next) => {
   }
 });
 
+mediaRouter.put("/:imdbID", async (req, res, next) => {
+  try {
+    const allMedia = await getMedia();
+    const index = allMedia.findIndex(
+      (media) => media.imdbID === req.params.imdbID
+    );
+    const oldMedia = allMedia[index];
+    const updatedMedia = { ...oldMedia, ...req.body, updatedAt: new Date() };
+    allMedia[index];
+    await writeMedia(allMedia);
+    res.send(updatedMedia);
+  } catch (error) {
+    next(error);
+  }
+});
+
 mediaRouter.delete("/:imdbID", async (req, res, next) => {
   try {
     const allMedia = await getMedia();
