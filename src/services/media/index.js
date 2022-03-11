@@ -33,7 +33,7 @@ mediaRouter.get("/:imdbID/comments", async (req, res, next) => {
     const foundMedia = allMedia.filter(
       (media) => media.imdbID === req.params.imdbID
     );
-    res.send(foundMedia.comments || []);
+    res.send(foundMedia[0].comments);
   } catch (error) {
     next(error);
   }
@@ -83,7 +83,11 @@ mediaRouter.put(
       );
       const foundMedia = allMedia[index];
       const comments = foundMedia.comments;
-      const newComment = req.body;
+      const newComment = {
+        ...req.body,
+        commentID: uniqid(),
+        createdAt: new Date(),
+      };
       comments.push(newComment);
 
       await writeMedia(allMedia);
@@ -94,34 +98,6 @@ mediaRouter.put(
   }
 );
 
-// mediaRouter.put(
-//   "/:imdbID/comments",
-//   commentValidator,
-//   async (req, res, next) => {
-//     try {
-//       const { review, user } = req.body;
-//       const newComment = { review, user, createdAt: new Date() };
-//       const allMedia = await getMedia();
-//       const index = allMedia.findIndex(
-//         (media) => media.imdbID === req.params.imdbID
-//       );
-//       const oldMedia = allMedia[index];
-//       oldMedia.comments = oldMedia.comments || [];
-//       const updatedMedia = {
-//         ...oldMedia,
-//         ...req.body,
-//         comments: [...oldMedia.comments, newComment],
-//         updatedAt: new Date(),
-//       };
-//       allMedia[index];
-//       await writeMedia(allMedia);
-//       res.send(updatedMedia);
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
-
 mediaRouter.delete("/:imdbID", async (req, res, next) => {
   try {
     const allMedia = await getMedia();
@@ -130,6 +106,23 @@ mediaRouter.delete("/:imdbID", async (req, res, next) => {
     );
     await writeMedia(remainingMedia);
     res.send({ message: `Movie with the ID ${req.params.imdbID} is deleted` });
+  } catch (error) {
+    next(error);
+  }
+});
+
+mediaRouter.delete("/:imdbID/comments/:commentID", async (req, res, next) => {
+  try {
+    const allMedia = await getMedia();
+    const index = allMedia.findIndex(
+      (media) => media.imdbID === req.params.imdbID
+    );
+    const comments = allMedia[index].comments;
+    const remainingComments = comments.filter(
+      (comment) => comment.commentID !== req.params.commentID
+    );
+    comments = remainingComments;
+    writeMedia(allMedia);
   } catch (error) {
     next(error);
   }
