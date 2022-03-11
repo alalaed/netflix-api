@@ -11,3 +11,5 @@ const mediaJSONPath = join(
 );
 
 export const getMedia = () => readJSON(mediaJSONPath);
+
+export const writeMedia = (content) => writeJSON(mediaJSONPath, content);
