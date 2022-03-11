@@ -6,6 +6,7 @@ import { validator, commentValidator } from "./validation.js";
 import { validationResult } from "express-validator";
 import { savedPosters } from "../../lib/fs-tools.js";
 import multer from "multer";
+import { extname } from "path";
 
 const mediaRouter = express.Router();
 
@@ -140,6 +141,21 @@ mediaRouter.post(
     try {
       await savedPosters(req.file.originalname, req.file.buffer);
       res.send({ message: "uploaded" });
+
+      const allMedia = await getMedia();
+
+      const index = allMedia.findIndex(
+        (media) => media.imdbID === req.params.imdbID
+      );
+      const oldMedia = allMedia[index];
+      const link = `http://localhost:3001/posters/${req.file.originalname}`;
+
+      const updatedMedia = { ...oldMedia, Poster: link };
+
+      allMedia[index] = updatedMedia;
+
+      writeMedia(allMedia);
+      res.send(updatedMedia);
     } catch (error) {
       next(error);
     }

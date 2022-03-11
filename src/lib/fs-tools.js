@@ -14,5 +14,6 @@ export const getMedia = () => readJSON(mediaJSONPath);
 
 export const writeMedia = (content) => writeJSON(mediaJSONPath, content);
 
-export const savedPosters = (filename, contentAsABuffer) =>
+export const savedPosters = async (filename, contentAsABuffer) => {
   writeFile(join(publicPath, filename), contentAsABuffer);
+};
