@@ -14,4 +14,16 @@ mediaRouter.get("/", async (req, res, next) => {
   }
 });
 
+mediaRouter.get("/:imdbID", async (req, res, next) => {
+  try {
+    const allMedia = await getMedia();
+    const foundMedia = allMedia.filter(
+      (media) => media.imdbID === req.params.imdbID
+    );
+    res.send(foundMedia);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default mediaRouter;
